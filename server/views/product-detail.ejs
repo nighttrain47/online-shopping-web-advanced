@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết sản phẩm - <%= product ? product.name : 'Not Found' %>
+    </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: #333;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .header nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .header nav a:hover {
+            text-decoration: underline;
+        }
+
+        .cart-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .product-detail {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            display: flex;
+            gap: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image {
+            flex: 1;
+        }
+
+        .product-image img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-info h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .product-info .price {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .product-info p {
+            margin-bottom: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .product-info label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .quantity-input {
+            width: 80px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>🛒 Shop Online</h1>
+        <nav>
+            <a href="/shop">Sản phẩm</a>
+            <a href="/shop/cart">Giỏ hàng <span class="cart-badge">
+                    <%= cartCount %>
+                </span></a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <a href="/shop" class="back-link">← Quay lại danh sách</a>
+
+        <% if (product) { %>
+            <div class="product-detail">
+                <div class="product-image">
+                    <% if (product.images && product.images[0]) { %>
+                        <img src="data:image/jpg;base64,<%= product.images[0] %>" alt="<%= product.name %>">
+                        <% } else { %>
+                            <img src="https://via.placeholder.com/400x400?text=No+Image" alt="No Image">
+                            <% } %>
+                </div>
+                <div class="product-info">
+                    <h2>
+                        <%= product.name %>
+                    </h2>
+                    <p class="price">
+                        <%= product.price?.toLocaleString() %> VNĐ
+                    </p>
+                    <p><strong>ID:</strong>
+                        <%= product._id %>
+                    </p>
+                    <% if (product.category) { %>
+                        <p><strong>Danh mục:</strong>
+                            <%= product.category.name %>
+                        </p>
+                        <% } %>
+                            <% if (product.description) { %>
+                                <p><strong>Mô tả:</strong>
+                                    <%= product.description %>
+                                </p>
+                                <% } %>
+
+                                    <form action="/shop/cart/add" method="POST">
+                                        <input type="hidden" name="productId" value="<%= product._id %>">
+                                        <label for="quantity">Số lượng:</label>
+                                        <input type="number" name="quantity" id="quantity" value="1" min="1" max="99"
+                                            class="quantity-input">
+                                        <br>
+                                        <button type="submit" class="btn btn-success">🛒 Thêm vào giỏ hàng</button>
+                                        <a href="/shop" class="btn btn-secondary">Tiếp tục mua sắm</a>
+                                    </form>
+                </div>
+            </div>
+            <% } else { %>
+                <p>Không tìm thấy sản phẩm.</p>
+                <% } %>
+    </div>
+</body>
+
+</html>
