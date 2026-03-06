@@ -4,6 +4,7 @@ const router = express.Router();
 // utils
 const CryptoUtil = require('../utils/CryptoUtil');
 const EmailUtil = require('../utils/EmailUtil');
+const JwtUtil = require('../utils/JwtUtil');
 // daos
 const CategoryDAO = require('../models/CategoryDAO');
 const ProductDAO = require('../models/ProductDAO');
@@ -87,6 +88,46 @@ router.post('/active', async function (req, res) {
     const _id = req.body.id;
     const token = req.body.token;
     const result = await CustomerDAO.active(_id, token, 1);
+    res.json(result);
+});
+
+// POST - Đăng nhập
+router.post('/login', async function (req, res) {
+    const username = req.body.username;
+    const password = req.body.password;
+    if (username && password) {
+        const customer = await CustomerDAO.selectByUsernameAndPassword(username, password);
+        if (customer) {
+            if (customer.active === 1) {
+                const token = JwtUtil.genToken();
+                res.json({ success: true, message: 'Authentication successful', token: token, customer: customer });
+            } else {
+                res.json({ success: false, message: 'Account is deactive' });
+            }
+        } else {
+            res.json({ success: false, message: 'Incorrect username or password' });
+        }
+    } else {
+        res.json({ success: false, message: 'Please input username and password' });
+    }
+});
+
+// GET - Kiểm tra token
+router.get('/token', JwtUtil.checkToken, function (req, res) {
+    const token = req.headers['x-access-token'] || req.headers['authorization'];
+    res.json({ success: true, message: 'Token is valid', token: token });
+});
+
+// PUT - Cập nhật thông tin khách hàng
+router.put('/customers/:id', JwtUtil.checkToken, async function (req, res) {
+    const _id = req.params.id;
+    const username = req.body.username;
+    const password = req.body.password;
+    const name = req.body.name;
+    const phone = req.body.phone;
+    const email = req.body.email;
+    const customer = { _id: _id, username: username, password: password, name: name, phone: phone, email: email };
+    const result = await CustomerDAO.update(customer);
     res.json(result);
 });
 
