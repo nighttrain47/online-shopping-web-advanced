@@ -62,7 +62,19 @@ app.use('/api/customer', require('./api/customer.js'));
 // shop routes (EJS)
 app.use('/shop', require('./api/shop.js'));
 
+// Serve client-admin build
+app.use('/admin', express.static(path.resolve(__dirname, '../client-admin/build')));
+app.get('/admin/*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client-admin/build', 'index.html'));
+});
+
+// Serve client-customer build
+app.use('/', express.static(path.resolve(__dirname, '../client-customer/build')));
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client-customer/build', 'index.html'));
+});
+
 // start server
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
-});
+});
