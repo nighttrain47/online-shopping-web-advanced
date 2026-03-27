@@ -28,6 +28,15 @@ const CustomerDAO = {
         const newvalues = { username: customer.username, password: customer.password, name: customer.name, phone: customer.phone, email: customer.email };
         const result = await Models.Customer.findByIdAndUpdate(customer._id, newvalues, { new: true });
         return result;
+    },
+    async selectAll() {
+        const query = {};
+        const customers = await Models.Customer.find(query).exec();
+        return customers;
+    },
+    async selectByID(_id) {
+        const customer = await Models.Customer.findById(_id).exec();
+        return customer;
     }
 };
 module.exports = CustomerDAO;

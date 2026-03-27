@@ -48,7 +48,8 @@ const ProductDAO = {
 
     // Lấy product theo id
     async selectById(_id) {
-        const product = await Models.Product.findById(_id.trim())
+        const idStr = (typeof _id === 'string') ? _id.trim() : _id;
+        const product = await Models.Product.findById(idStr)
             .populate('categories_id')
             .exec();
         return product;
